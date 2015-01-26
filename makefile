@@ -1,4 +1,6 @@
 #in makefiles, a hash indicates a comment instead
 all: period
 period: period.c
-	gcc -o period period.c -lwiringPi
+	gcc -o period period.c -lwiringPi -lpthread
+clean: 
+	rm period

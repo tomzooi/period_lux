@@ -60,7 +60,7 @@ int fd = 0;
 unsigned int lastlux;
 unsigned int lastdimfactor;
 /* signal process */
-void everysecond(int signo) {
+void everysecond() {
 	time_t rawtime;
 	struct tm * timeinfo;
 	char buffer [180];
@@ -151,32 +151,16 @@ void everysecond(int signo) {
        return visible_and_ir*2;
     }
 
-/* init sigaction */
-void init_sigaction(void){
-    struct sigaction act;
-
-    act.sa_handler = everysecond;
-    act.sa_flags   = 0;
-    sigemptyset(&act.sa_mask);
-    sigaction(SIGPROF, &act, NULL);
-} 
-
-/* init */
-void init_time(void){
-    struct itimerval val;
-
-    val.it_value.tv_sec = 5;
-    val.it_value.tv_usec = 0;
-    val.it_interval = val.it_value;
-    setitimer(ITIMER_PROF, &val, NULL);
-}
-
 
 int main(void) {
 	fd = wiringPiI2CSetup(TSL2561_ADDR_LOW); //open lux sensor system
 	lastlux = getLux(fd);
     char *str;
     char c;
+    struct timespec tim, tim2;
+	tim.tv_sec = 10;
+	//tim.tv_nsec = 0;
+    
 	uart0_filestream = open("/dev/ttyAMA0", O_RDWR | O_NOCTTY | O_NDELAY);		//Open in non blocking read/write mode
 	if (uart0_filestream == -1)
 	{
@@ -196,8 +180,14 @@ int main(void) {
 	tcflush(uart0_filestream, TCIFLUSH);
 	tcsetattr(uart0_filestream, TCSANOW, &options);
     
-    init_sigaction();
-    init_time();
-    while(1);
+    while(1) {
+		if(nanosleep(&tim , &tim2) < 0 )   {
+		  printf("Nano sleep system call failed \n");
+		  return -1;
+		}
+		else {
+			everysecond();
+		}
+	}
     return 0;
 }
