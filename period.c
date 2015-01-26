@@ -158,7 +158,7 @@ int main(void) {
     char *str;
     char c;
     struct timespec tim, tim2;
-	tim.tv_sec = 10;
+	tim.tv_sec = 5;
 	//tim.tv_nsec = 0;
     
 	uart0_filestream = open("/dev/ttyAMA0", O_RDWR | O_NOCTTY | O_NDELAY);		//Open in non blocking read/write mode
