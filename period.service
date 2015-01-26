@@ -1,0 +1,11 @@
+[Unit]
+Description=period
+Requires=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/period
+ExecStop=/usr/bin/killall period
+
+[Install]
+WantedBy=multi-user.target
